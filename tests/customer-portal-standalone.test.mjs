@@ -49,7 +49,13 @@ test('Migrations محصورة في جداول بوابة العملاء فقط',
     const executableSql=sql
       .replace(/--.*$/gm,'')
       .replace(/comment\s+on\s+[^;]+;/gi,'');
-    assert.doesNotMatch(executableSql,/resort_bookings|app_state|customers|payments|expenses|commission|service_role/i, file);
+    if(file.includes('clean_legacy_resort_components')){
+      assert.match(executableSql,/drop table if exists public\.app_state/i, file);
+      assert.match(executableSql,/drop table if exists public\.resort_bookings/i, file);
+      assert.doesNotMatch(executableSql,/select\s+.*\s+from\s+public\.(app_state|resort_bookings)/i, file);
+    }else{
+      assert.doesNotMatch(executableSql,/resort_bookings|app_state|customers|payments|expenses|commission|service_role/i, file);
+    }
   }
   const merged=(await Promise.all(entries.map(file=>read(`supabase/migrations/${file}`)))).join('\n');
   for(const name of [
@@ -61,7 +67,8 @@ test('Migrations محصورة في جداول بوابة العملاء فقط',
     'customer_portal_contact',
     'customer_portal_feedback',
     'customer_portal_visitor_counter',
-    'customer_portal_activity_log'
+    'customer_portal_activity_log',
+    'customer_portal_admins'
   ]) assert.match(merged,new RegExp(name));
 });
 

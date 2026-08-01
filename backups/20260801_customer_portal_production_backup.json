@@ -1,0 +1,184 @@
+{
+  "exported_at": "2026-08-01T15:20:32.194452+00:00",
+  "project_ref": "ztqqdjryvecscidxxbfe",
+  "purpose": "Pre-cleanup backup before dedicating Supabase project to the standalone customer portal.",
+  "row_counts": {
+    "customer_portal_activity_log": 0,
+    "customer_portal_contact": 1,
+    "customer_portal_feedback": 0,
+    "customer_portal_images": 2,
+    "customer_portal_pricing": 1,
+    "customer_portal_resort_info": 1,
+    "customer_portal_seasons": 0,
+    "customer_portal_unavailable_periods": 1,
+    "customer_portal_visitor_counter": 1,
+    "resort_admins": 1
+  },
+  "data": {
+    "resort_admins": [
+      {
+        "user_id": "db93f528-6cb2-41f0-bd13-4dcf759179ac",
+        "created_at": "2026-07-26T21:51:58.174268+00:00"
+      }
+    ],
+    "customer_portal_resort_info": [
+      {
+        "id": "main",
+        "resort_name": "أضواء الشرق",
+        "short_description": "منتجع واسع في القاع البارد لجلساتكم ومناسباتكم الخاصة",
+        "detailed_description": "استمتعوا بتجربة مميزة في منتجع أضواء الشرق بالقاع البارد، بمساحة واسعة تقارب 5000 متر مربع ومسطحات خضراء كبيرة توفر الخصوصية والراحة للعائلات والمناسبات الخاصة.\n\nيضم المنتجع جلسات خارجية متعددة، وخيمة مؤثثة، وصالة داخلية تحتوي على جلسة كنب وطاولة طعام، ومطبخًا داخليًا متكاملًا، إضافة إلى مطبخ خارجي في قسم الرجال.\n\nكما يتوفر مسبح كبير مغلق بدرابزين زجاجي، وثلاث برادات مياه مفلترة، وتكييف سبلت في الصالة والغرف، وتكييف صحراوي للجلسات الخارجية للرجال والنساء.\n\nغرف النوم مخصصة لعملاء المبيت فقط، وتشمل غرفة تحتوي على 6 أسرّة، وغرفة بسرير مزدوج مع دورة مياه، إضافة إلى غرفة إضافية.",
+        "checkin_time": "3:30 عصرًا",
+        "checkout_time": "3:00 فجرًا",
+        "maps_url": "https://maps.app.goo.gl/uh8t93tMm5agNWvx7?g_st=com.google.maps.preview.copy",
+        "whatsapp_url": "https://iwtsp.com/966560442799",
+        "instagram_url": "https://www.instagram.com/adwaa_al_sharq_resort?igsh=ODg0Z3AxZnNld2Jx&utm_source=q",
+        "resort_address": "القاع البارد",
+        "checkin_instructions": "يرجى التواصل مع إدارة المنتجع عبر واتساب لاستكمال إجراءات الدخول. غرف النوم متاحة لعملاء المبيت فقط.",
+        "features": [
+          "مساحة تقارب 5000 متر مربع",
+          "مسطحات خضراء واسعة",
+          "جلسات خارجية متعددة للرجال والنساء",
+          "خيمة مؤثثة",
+          "صالة داخلية بكنب وطاولة طعام",
+          "مطبخ داخلي متكامل",
+          "مطبخ خارجي في قسم الرجال",
+          "مسبح كبير مغلق بدرابزين زجاجي",
+          "ثلاث برادات مياه مفلترة",
+          "تكييف سبلت في الصالة والغرف",
+          "تكييف صحراوي للجلسات الخارجية",
+          "غرف نوم مخصصة لعملاء المبيت"
+        ],
+        "booking_requests_open": true,
+        "closed_message": "نعتذر، استقبال طلبات الحجز متوقف مؤقتًا في الوقت الحالي. يمكنكم التواصل معنا عبر واتساب للاستفسار.",
+        "updated_by": null,
+        "updated_at": "2026-07-31T21:42:28.871964+00:00"
+      }
+    ],
+    "customer_portal_images": [
+      {
+        "id": "10d9fa2d-7c41-4b4f-869d-be759653f10f",
+        "category": "general",
+        "title": "لقطة شاشة للنظام",
+        "description": "ملف إداري غير مخصص للعرض في بوابة العملاء.",
+        "image_alt": "لقطة شاشة مخفية من بوابة العملاء",
+        "image_url": "https://ztqqdjryvecscidxxbfe.supabase.co/storage/v1/object/public/customer-portal-images/portal/20260731201203797-y25q3v-img-0053-png.webp",
+        "display_order": 1,
+        "is_cover": false,
+        "is_visible": false,
+        "updated_by": null,
+        "created_at": "2026-07-31T20:12:08.530799+00:00",
+        "updated_at": "2026-07-31T21:42:28.871964+00:00"
+      },
+      {
+        "id": "f850dacc-3456-404d-b7ed-8175cda61086",
+        "category": "general",
+        "title": "لقطة شاشة للوحة الإدارة",
+        "description": "ملف إداري غير مخصص للعرض في بوابة العملاء.",
+        "image_alt": "لقطة شاشة مخفية من بوابة العملاء",
+        "image_url": "https://ztqqdjryvecscidxxbfe.supabase.co/storage/v1/object/public/customer-portal-images/portal/20260731202447345-6ohwsq-img-0054-png.webp",
+        "display_order": 2,
+        "is_cover": false,
+        "is_visible": false,
+        "updated_by": null,
+        "created_at": "2026-07-31T20:24:50.001441+00:00",
+        "updated_at": "2026-07-31T21:42:28.871964+00:00"
+      }
+    ],
+    "customer_portal_unavailable_periods": [
+      {
+        "id": "83f5adf0-c516-4dd1-a610-b3bf05cbb840",
+        "start_date": "2026-08-01",
+        "end_date": "2026-08-11",
+        "updated_by": "db93f528-6cb2-41f0-bd13-4dcf759179ac",
+        "created_at": "2026-07-31T20:13:05.549134+00:00",
+        "updated_at": "2026-07-31T20:13:05.549134+00:00"
+      }
+    ],
+    "customer_portal_pricing": [
+      {
+        "id": "main",
+        "weekday_price": 650.00,
+        "weekend_price": 700.00,
+        "updated_by": "db93f528-6cb2-41f0-bd13-4dcf759179ac",
+        "created_at": "2026-07-31T18:04:53.282266+00:00",
+        "updated_at": "2026-07-31T20:16:51.528765+00:00"
+      }
+    ],
+    "customer_portal_seasons": [],
+    "customer_portal_contact": [
+      {
+        "id": "main",
+        "whatsapp_number": "966560442799",
+        "maps_url": "https://maps.app.goo.gl/uh8t93tMm5agNWvx7?g_st=com.google.maps.preview.copy",
+        "instagram_url": "https://www.instagram.com/adwaa_al_sharq_resort?igsh=ODg0Z3AxZnNld2Jx&utm_source=q",
+        "email": "",
+        "contact_hours": "يوميًا حسب أوقات استقبال الطلبات المعتمدة من الإدارة.",
+        "updated_by": null,
+        "created_at": "2026-07-31T18:05:00.300746+00:00",
+        "updated_at": "2026-07-31T21:42:28.871964+00:00"
+      }
+    ],
+    "customer_portal_feedback": [],
+    "customer_portal_activity_log": [],
+    "customer_portal_visitor_counter": [
+      {
+        "id": "main",
+        "total_count": 0,
+        "launched_at": "2026-07-31T23:09:01.928595+00:00",
+        "updated_at": "2026-07-31T23:09:01.928595+00:00"
+      }
+    ]
+  },
+  "storage": {
+    "buckets": [
+      {
+        "id": "customer-portal-feedback",
+        "name": "customer-portal-feedback",
+        "public": false,
+        "file_size_limit": 5242880,
+        "allowed_mime_types": [
+          "image/jpeg",
+          "image/png",
+          "image/webp"
+        ],
+        "created_at": "2026-07-31T23:09:01.928595+00:00",
+        "updated_at": "2026-07-31T23:09:01.928595+00:00"
+      },
+      {
+        "id": "customer-portal-images",
+        "name": "customer-portal-images",
+        "public": true,
+        "file_size_limit": 10485760,
+        "allowed_mime_types": [
+          "image/jpeg",
+          "image/png",
+          "image/webp"
+        ],
+        "created_at": "2026-07-31T18:04:46.242891+00:00",
+        "updated_at": "2026-07-31T18:04:46.242891+00:00"
+      }
+    ],
+    "objects": [
+      {
+        "bucket_id": "customer-portal-images",
+        "name": "portal/20260731201203797-y25q3v-img-0053-png.webp",
+        "owner": "db93f528-6cb2-41f0-bd13-4dcf759179ac",
+        "size": 601613,
+        "mimetype": "image/png",
+        "created_at": "2026-07-31T20:12:06.732+00:00",
+        "updated_at": "2026-07-31T20:12:06.732+00:00",
+        "last_accessed_at": "2026-07-31T20:12:06.732+00:00"
+      },
+      {
+        "bucket_id": "customer-portal-images",
+        "name": "portal/20260731202447345-6ohwsq-img-0054-png.webp",
+        "owner": "db93f528-6cb2-41f0-bd13-4dcf759179ac",
+        "size": 288702,
+        "mimetype": "image/png",
+        "created_at": "2026-07-31T20:24:49.453495+00:00",
+        "updated_at": "2026-07-31T20:24:49.453495+00:00",
+        "last_accessed_at": "2026-07-31T20:24:49.453495+00:00"
+      }
+    ]
+  }
+}

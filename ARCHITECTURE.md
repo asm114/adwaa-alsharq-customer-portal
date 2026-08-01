@@ -27,5 +27,13 @@
 - `customer_portal_feedback`
 - `customer_portal_visitor_counter`
 - `customer_portal_activity_log`
+- `customer_portal_admins`
 
 أي جدول حجوزات أو عملاء إداري خارج هذه القائمة ليس جزءًا من هذا المشروع.
+
+## Production Supabase
+
+`ztqqdjryvecscidxxbfe` هو Production الرسمي لبوابة العملاء فقط.
+`pgdvlklpyrvmwzitsmbw` يبقى خاصًا بنظام الإدارة الأساسي.
+
+لا يوجد اعتماد بين المشروعين على مستوى قاعدة البيانات. صلاحيات إدارة بوابة العملاء مخزنة في `customer_portal_admins`، والدالة `is_resort_admin()` باقية بالاسم نفسه لتجنب كسر سياسات RLS القديمة.

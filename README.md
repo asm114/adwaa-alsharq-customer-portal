@@ -43,3 +43,11 @@ python3 -m http.server 8080
 هذا المشروع يستخدم جداول مستقلة باسم يبدأ بـ `customer_portal_`.
 لا تستخدم مفاتيح `service_role` في المتصفح.
 لا تطبق أي Migration على Production إلا بعد مراجعة واعتماد صريح.
+
+## Production
+
+مشروع Supabase الرسمي لبوابة العملاء هو `ztqqdjryvecscidxxbfe`.
+النظام الأساسي يعمل على مشروع منفصل هو `pgdvlklpyrvmwzitsmbw`.
+
+مصدر صلاحيات إدارة البوابة هو جدول `customer_portal_admins`.
+تم الإبقاء على اسم الدالة `is_resort_admin()` لتوافق سياسات RLS الحالية، لكنها تخص بوابة العملاء فقط داخل هذا المشروع.
