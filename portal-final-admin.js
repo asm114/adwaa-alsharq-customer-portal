@@ -2,13 +2,73 @@ const PORTAL_FEEDBACK_TABLE='customer_portal_feedback';
 const PORTAL_ACTIVITY_TABLE='customer_portal_activity_log';
 const PORTAL_FEEDBACK_BUCKET='customer-portal-feedback';
 let portalFeedback=[];
+let portalAdminAuthorized=false;
 
 const feedbackLabels={complaint:'شكوى',cleanliness:'نظافة',maintenance:'صيانة أو عطل',suggestion:'اقتراح',thanks:'شكر',other:'أخرى'};
 const feedbackStatusLabels={new:'جديدة',in_progress:'قيد المعالجة',completed:'مكتملة',closed:'مغلقة'};
 const setSummary=(id,value)=>{const el=document.getElementById(id);if(el)el.textContent=String(value??0)};
 
+function setPortalAdminVisibility(authorized){
+  portalAdminAuthorized=Boolean(authorized);
+  const shell=document.querySelector('.standalone-shell');
+  if(shell)shell.hidden=!portalAdminAuthorized;
+  const form=document.getElementById('adminLoginForm');
+  if(form)form.hidden=portalAdminAuthorized;
+  let logout=document.getElementById('adminLogoutButton');
+  if(!logout){
+    logout=document.createElement('button');
+    logout.id='adminLogoutButton';
+    logout.type='button';
+    logout.className='secondary';
+    logout.textContent='تسجيل الخروج';
+    logout.addEventListener('click',async()=>{
+      logout.disabled=true;
+      await supabaseClient.auth.signOut();
+      currentUser=null;
+      setPortalAdminVisibility(false);
+      document.getElementById('adminAuthStatus').textContent='تم تسجيل الخروج.';
+      logout.disabled=false;
+    });
+    document.querySelector('.auth-card')?.appendChild(logout);
+  }
+  logout.hidden=!portalAdminAuthorized;
+}
+
+async function verifyPortalAdminAccess(){
+  const status=document.getElementById('adminAuthStatus');
+  if(status)status.textContent='جاري التحقق من صلاحية المدير...';
+  const {data:{user},error:userError}=await supabaseClient.auth.getUser();
+  if(userError||!user){
+    currentUser=null;
+    setPortalAdminVisibility(false);
+    if(status)status.textContent='سجل دخول المدير لإدارة بيانات البوابة.';
+    return false;
+  }
+  const {data:isAdmin,error:adminError}=await supabaseClient.rpc('is_resort_admin');
+  if(adminError||isAdmin!==true){
+    await supabaseClient.auth.signOut();
+    currentUser=null;
+    setPortalAdminVisibility(false);
+    if(status)status.textContent='هذا الحساب لا يملك صلاحية إدارة بوابة العملاء.';
+    return false;
+  }
+  currentUser=user;
+  setPortalAdminVisibility(true);
+  if(status)status.textContent=`مسجل كمدير: ${user.email||user.id}`;
+  return true;
+}
+
+async function loadAuthorizedPortalAdminData(){
+  if(!portalAdminAuthorized)return;
+  await Promise.all([
+    loadPortalFinalSummary(),
+    loadPortalFeedback(),
+    loadPortalActivityLog()
+  ]);
+}
+
 async function loadPortalFinalSummary(){
-  if(!window.supabaseClient)return;
+  if(!window.supabaseClient||!portalAdminAuthorized)return;
   const [visitors,images,periods,seasons,feedback]=await Promise.all([
     supabaseClient.from('customer_portal_visitor_counter').select('total_count').eq('id','main').maybeSingle(),
     supabaseClient.from(PORTAL_IMAGES_TABLE).select('id',{count:'exact',head:true}).eq('is_visible',true),
@@ -25,7 +85,7 @@ async function loadPortalFinalSummary(){
 
 async function loadPortalFeedback(){
   const status=document.getElementById('portalFeedbackStatus');
-  if(!window.supabaseClient||!status)return;
+  if(!window.supabaseClient||!status||!portalAdminAuthorized)return;
   status.textContent='جاري تحميل الملاحظات...';
   const {data,error}=await supabaseClient.from(PORTAL_FEEDBACK_TABLE).select('id,category,message,customer_name,contact_number,image_paths,status,admin_note,created_at').order('created_at',{ascending:false});
   if(error){status.textContent='تعذر تحميل الملاحظات.';status.className='portal-inline-status error';return}
@@ -58,12 +118,14 @@ async function renderPortalFeedback(){
 function updatePortalFeedbackDraft(id,key,value){const item=portalFeedback.find(x=>x.id===id);if(item)item[key]=value}
 
 async function savePortalFeedback(id){
+  if(!portalAdminAuthorized)return;
   const item=portalFeedback.find(x=>x.id===id);if(!item)return;
   const {error}=await supabaseClient.from(PORTAL_FEEDBACK_TABLE).update({status:item.status,admin_note:item.admin_note,updated_by:currentUser?.id||null}).eq('id',id);
   if(error){alert('تعذر حفظ الملاحظة.');return}await loadPortalFeedback();await loadPortalActivityLog();
 }
 
 async function deletePortalFeedback(id){
+  if(!portalAdminAuthorized)return;
   const item=portalFeedback.find(x=>x.id===id);if(!item||!confirm('حذف الملاحظة نهائيًا؟ لا يمكن التراجع.'))return;
   const {error}=await supabaseClient.from(PORTAL_FEEDBACK_TABLE).delete().eq('id',id);
   if(error){alert('تعذر حذف الملاحظة.');return}
@@ -72,10 +134,12 @@ async function deletePortalFeedback(id){
 }
 
 async function recordPortalBackupAction(description){
+  if(!portalAdminAuthorized)return;
   await supabaseClient.from(PORTAL_ACTIVITY_TABLE).insert({action_type:'backup_export',entity_type:'customer_portal_backup',description,admin_id:currentUser?.id||null});
 }
 
 async function exportCustomerPortalBackup(){
+  if(!portalAdminAuthorized)return;
   const tables=['customer_portal_resort_info','customer_portal_images','customer_portal_unavailable_periods','customer_portal_pricing','customer_portal_seasons','customer_portal_contact','customer_portal_visitor_counter'];
   const backup={format:'adwaa-customer-portal-backup',version:1,created_at:new Date().toISOString(),data:{}};
   for(const table of tables){const {data,error}=await supabaseClient.from(table).select('*');if(error){alert(`تعذر إنشاء نسخة كاملة عند جدول ${table}. لم يتم تنزيل ملف جزئي.`);return}backup.data[table]=data||[]}
@@ -88,10 +152,25 @@ async function exportCustomerPortalBackup(){
 }
 
 async function loadPortalActivityLog(){
-  const root=document.getElementById('portalActivityList');if(!root||!window.supabaseClient)return;
+  const root=document.getElementById('portalActivityList');if(!root||!window.supabaseClient||!portalAdminAuthorized)return;
   const {data,error}=await supabaseClient.from(PORTAL_ACTIVITY_TABLE).select('id,action_type,entity_type,entity_id,description,admin_id,created_at').order('created_at',{ascending:false}).limit(100);
   if(error){root.innerHTML='<div class="portal-empty-inline">تعذر تحميل سجل العمليات.</div>';return}
   root.innerHTML=(data||[]).map(item=>`<article class="portal-activity-item"><b>${escapeHtml(item.action_type)} • ${escapeHtml(item.entity_type)}</b><div class="meta">${new Date(item.created_at).toLocaleString('ar-SA')} • المدير: ${escapeHtml(item.admin_id||'—')}<br>${escapeHtml(item.description||'')}</div></article>`).join('')||'<div class="portal-empty-inline">لا توجد عمليات مسجلة بعد.</div>';
 }
 
-document.addEventListener('DOMContentLoaded',()=>{loadPortalFinalSummary();loadPortalFeedback();loadPortalActivityLog()});
+document.addEventListener('DOMContentLoaded',async()=>{
+  setPortalAdminVisibility(false);
+  const authorized=await verifyPortalAdminAccess();
+  if(authorized)await loadAuthorizedPortalAdminData();
+
+  supabaseClient.auth.onAuthStateChange(async(event)=>{
+    if(event==='SIGNED_IN'){
+      const allowed=await verifyPortalAdminAccess();
+      if(allowed)await loadAuthorizedPortalAdminData();
+    }
+    if(event==='SIGNED_OUT'){
+      currentUser=null;
+      setPortalAdminVisibility(false);
+    }
+  });
+});
