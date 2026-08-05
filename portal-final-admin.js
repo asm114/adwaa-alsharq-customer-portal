@@ -8,12 +8,105 @@ const feedbackLabels={complaint:'شكوى',cleanliness:'نظافة',maintenance:
 const feedbackStatusLabels={new:'جديدة',in_progress:'قيد المعالجة',completed:'مكتملة',closed:'مغلقة'};
 const setSummary=(id,value)=>{const el=document.getElementById(id);if(el)el.textContent=String(value??0)};
 
+function installPortalAdminEnhancementStyles(){
+  if(document.getElementById('portalAdminEnhancementStyles'))return;
+  const style=document.createElement('style');
+  style.id='portalAdminEnhancementStyles';
+  style.textContent=`
+    #adminLoginForm.portal-auth-hidden{display:none!important}
+    #adminLogoutButton{margin-top:10px;min-height:42px;padding:8px 18px}
+    .portal-unavailable-table-wrap{overflow-x:auto;border:1px solid #e1ddd2;border-radius:16px;background:#fff;margin-top:14px}
+    .portal-unavailable-table{width:100%;border-collapse:collapse;min-width:900px;text-align:right}
+    .portal-unavailable-table th,.portal-unavailable-table td{padding:12px 10px;border-bottom:1px solid #ebe7dd;vertical-align:middle}
+    .portal-unavailable-table th{background:#f3f8f5;color:#123d32;font-size:14px;white-space:nowrap}
+    .portal-unavailable-table tbody tr:last-child td{border-bottom:0}
+    .portal-unavailable-table tbody tr:hover{background:#fbfaf6}
+    .portal-unavailable-table .portal-date-main{display:block;font-weight:800;color:#153c33;white-space:nowrap}
+    .portal-unavailable-table .portal-date-full{display:block;margin-top:4px;color:#66756f;font-size:12px;line-height:1.5}
+    .portal-unavailable-table .portal-duration{font-weight:800;white-space:nowrap}
+    .portal-unavailable-table .portal-row-actions{display:flex;gap:6px;flex-wrap:wrap;white-space:nowrap}
+    .portal-unavailable-table .portal-row-actions button{min-height:36px;padding:6px 12px}
+    @media(max-width:760px){
+      .portal-unavailable-table-wrap{overflow:visible;border:0;background:transparent}
+      .portal-unavailable-table{min-width:0;border-collapse:separate;border-spacing:0 10px}
+      .portal-unavailable-table thead{display:none}
+      .portal-unavailable-table,.portal-unavailable-table tbody,.portal-unavailable-table tr,.portal-unavailable-table td{display:block;width:100%}
+      .portal-unavailable-table tr{background:#fff;border:1px solid #e1ddd2;border-radius:14px;padding:8px 12px;box-sizing:border-box}
+      .portal-unavailable-table td{display:grid;grid-template-columns:105px 1fr;gap:10px;padding:8px 0;border-bottom:1px dashed #e8e3d8}
+      .portal-unavailable-table td:last-child{border-bottom:0}
+      .portal-unavailable-table td::before{content:attr(data-label);font-weight:800;color:#123d32}
+      .portal-unavailable-table .portal-row-actions{justify-content:flex-start}
+    }
+  `;
+  document.head.appendChild(style);
+}
+
+function portalUnavailableDurationDays(startDate,endDate){
+  const start=portalDateDays(startDate);
+  const end=portalDateDays(endDate);
+  return Number.isFinite(start)&&Number.isFinite(end)?Math.max(1,end-start+1):1;
+}
+
+function renderPortalUnavailablePeriods(){
+  const root=document.getElementById('portalUnavailableList');
+  if(!root)return;
+  if(!portalUnavailablePeriods.length){
+    root.innerHTML='<div class="portal-empty-inline">لا توجد فترات غير متاحة محفوظة بعد.</div>';
+    return;
+  }
+  const rows=portalUnavailablePeriods.map((period,index)=>{
+    const duration=portalUnavailableDurationDays(period.start_date,period.end_date);
+    return `
+      <tr>
+        <td data-label="الترتيب">${index+1}</td>
+        <td data-label="البداية ميلادي">
+          <span class="portal-date-main">${escapeHtml(period.start_date)}</span>
+          <span class="portal-date-full">${escapeHtml(portalFormatGregorian(period.start_date))}</span>
+        </td>
+        <td data-label="البداية هجري"><span class="portal-date-full">${escapeHtml(portalFormatHijri(period.start_date))}</span></td>
+        <td data-label="النهاية ميلادي">
+          <span class="portal-date-main">${escapeHtml(period.end_date)}</span>
+          <span class="portal-date-full">${escapeHtml(portalFormatGregorian(period.end_date))}</span>
+        </td>
+        <td data-label="النهاية هجري"><span class="portal-date-full">${escapeHtml(portalFormatHijri(period.end_date))}</span></td>
+        <td data-label="المدة"><span class="portal-duration">${duration} ${duration===1?'يوم':'أيام'}</span></td>
+        <td data-label="الإجراءات">
+          <div class="portal-row-actions">
+            <button class="secondary" type="button" onclick="editPortalUnavailablePeriod('${period.id}')">تعديل</button>
+            <button class="danger" type="button" onclick="deletePortalUnavailablePeriod('${period.id}')">حذف</button>
+          </div>
+        </td>
+      </tr>`;
+  }).join('');
+  root.innerHTML=`
+    <div class="portal-unavailable-table-wrap">
+      <table class="portal-unavailable-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>البداية بالميلادي</th>
+            <th>البداية بالهجري</th>
+            <th>النهاية بالميلادي</th>
+            <th>النهاية بالهجري</th>
+            <th>المدة</th>
+            <th>الإجراءات</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+}
+
 function setPortalAdminVisibility(authorized){
   portalAdminAuthorized=Boolean(authorized);
   const shell=document.querySelector('.standalone-shell');
   if(shell)shell.hidden=!portalAdminAuthorized;
   const form=document.getElementById('adminLoginForm');
-  if(form)form.hidden=portalAdminAuthorized;
+  if(form){
+    form.hidden=portalAdminAuthorized;
+    form.classList.toggle('portal-auth-hidden',portalAdminAuthorized);
+    form.style.display=portalAdminAuthorized?'none':'';
+  }
   let logout=document.getElementById('adminLogoutButton');
   if(!logout){
     logout=document.createElement('button');
@@ -32,6 +125,7 @@ function setPortalAdminVisibility(authorized){
     document.querySelector('.auth-card')?.appendChild(logout);
   }
   logout.hidden=!portalAdminAuthorized;
+  logout.style.display=portalAdminAuthorized?'inline-flex':'none';
 }
 
 async function verifyPortalAdminAccess(){
@@ -159,6 +253,7 @@ async function loadPortalActivityLog(){
 }
 
 document.addEventListener('DOMContentLoaded',async()=>{
+  installPortalAdminEnhancementStyles();
   setPortalAdminVisibility(false);
   const authorized=await verifyPortalAdminAccess();
   if(authorized)await loadAuthorizedPortalAdminData();
