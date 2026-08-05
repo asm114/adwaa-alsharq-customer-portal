@@ -110,7 +110,7 @@ function portalCalendarHtml(){
   </section>`;
 }
 
-function renderPortalUnavailablePeriods(){
+function renderPortalUnavailableCalendarAndTable(){
   const root=document.getElementById('portalUnavailableList');
   if(!root)return;
   root.innerHTML=`${portalCalendarHtml()}<div id="portalUnavailableTableHost"></div>`;
@@ -122,7 +122,7 @@ function renderPortalUnavailablePeriods(){
   root.id='portalUnavailableList';
   portalCalendarBindEvents();
 }
-window.renderPortalUnavailablePeriods=renderPortalUnavailablePeriods;
+window.renderPortalUnavailablePeriods=renderPortalUnavailableCalendarAndTable;
 
 function portalCalendarBindEvents(){
   document.querySelectorAll('[data-portal-calendar-nav]').forEach(button=>button.addEventListener('click',()=>{
@@ -137,7 +137,7 @@ function portalCalendarBindEvents(){
         1
       ));
     }
-    renderPortalUnavailablePeriods();
+    renderPortalUnavailableCalendarAndTable();
   }));
   document.querySelectorAll('[data-portal-calendar-date]').forEach(button=>button.addEventListener('click',()=>togglePortalUnavailableCalendarDate(button.dataset.portalCalendarDate)));
 }
